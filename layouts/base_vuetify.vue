@@ -62,23 +62,16 @@
     </main>
     <v-navigation-drawer
       temporary
-      right="right"
+      :right="right"
       v-model="rightDrawer"
       app
     >
       <v-list>
-        <v-list-tile
-            router
-            :to="item.to"
-            :key="i"
-            v-for="(item, i) in rightItems"
-            exact>
+        <v-list-tile @click.native="right = !right">
           <v-list-tile-action>
-            <v-icon v-html="item.icon"></v-icon>
+            <v-icon light>compare_arrows</v-icon>
           </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title v-text="item.title"></v-list-tile-title>
-          </v-list-tile-content>
+          <v-list-tile-title>Switch drawer (click me)</v-list-tile-title>
         </v-list-tile>
       </v-list>
     </v-navigation-drawer>
@@ -99,12 +92,8 @@
           { icon: 'apps', title: 'Welcome', to: '/' },
           { icon: 'bubble_chart', title: 'Inspire', to: '/inspire' },
         ],
-        rightItems: [
-          { icon: 'dashboard', title: 'Dashboard', to: '/dashboard' },
-          { icon: 'settings', title: 'Settings', to: '/settings' },
-          { icon: 'exit_to_app', title: 'Logout', to: '/logout' },
-        ],
         miniVariant: false,
+        right: true,
         rightDrawer: false,
         title: 'Vuetify.js',
       };
