@@ -10,6 +10,10 @@ import {
   VIcon,
   VGrid,
   VToolbar,
+  VTextField,
+  VForm,
+  VAlert,
+  VProgressLinear,
 } from 'vuetify';
 
 Vue.use(Vuetify, {
@@ -23,5 +27,9 @@ Vue.use(Vuetify, {
     VIcon,
     VGrid,
     VToolbar,
+    VTextField,
+    VForm,
+    VAlert,
+    VProgressLinear,
   },
 });

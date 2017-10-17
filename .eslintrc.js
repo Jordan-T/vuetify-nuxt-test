@@ -37,5 +37,9 @@ module.exports = {
         'state', // for state of Vuex
       ],
     }],
+
+    // https://github.com/kriasoft/react-starter-kit/issues/1180
+    'import/no-unresolved': 'off',
+    'import/extensions': 'off',
   }
 };

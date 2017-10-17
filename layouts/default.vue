@@ -1,5 +1,5 @@
 <template>
-  <v-app dark>
+  <v-app :dark="darkTheme">
     <v-navigation-drawer
       persistent
       :mini-variant="miniVariant"
@@ -56,6 +56,15 @@
     <main>
       <v-content>
         <v-container>
+          <v-alert
+              :color="alert.color"
+              :icon="alert.icon"
+              :dismissible="alert.dismissible"
+              :value="alert.showed"
+              v-for="(alert, index) in alerts"
+              :key="index"
+              @input="onHideAlert(alert)"
+          >{{ alert.text }}</v-alert>
           <nuxt />
         </v-container>
       </v-content>
@@ -68,7 +77,8 @@
     >
       <v-list>
         <v-list-tile
-            router
+            :router="item.to"
+            @click.prevent="(typeof item.click === 'function') ? item.click($event) : ''"
             :to="item.to"
             :key="i"
             v-for="(item, i) in rightItems"
@@ -89,25 +99,45 @@
 </template>
 
 <script>
+  import { mapGetters, mapActions } from 'vuex';
+
   export default {
     data() {
       return {
         clipped: false,
         drawer: true,
         fixed: false,
+        darkTheme: true,
         items: [
           { icon: 'apps', title: 'Welcome', to: '/' },
           { icon: 'bubble_chart', title: 'Inspire', to: '/inspire' },
+          { icon: 'list', title: 'Todos', to: '/todos' },
         ],
         rightItems: [
           { icon: 'dashboard', title: 'Dashboard', to: '/dashboard' },
           { icon: 'settings', title: 'Settings', to: '/settings' },
           { icon: 'exit_to_app', title: 'Logout', to: '/logout' },
+          { icon: 'invert_colors', title: 'Toggle dark', click: () => { this.darkTheme = !this.darkTheme; } },
         ],
         miniVariant: false,
         rightDrawer: false,
         title: 'Vuetify.js',
       };
+    },
+    computed: {
+      ...mapGetters({
+        alerts: 'allAlerts',
+      }),
+    },
+    methods: {
+      ...mapActions({
+        showAlert: 'showAlert',
+        removeAlert: 'removeAlert',
+        addAlert: 'addAlert',
+      }),
+      onHideAlert(alert) {
+        this.removeAlert({ alert });
+      },
     },
   };
 </script>
