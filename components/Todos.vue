@@ -26,38 +26,30 @@
       </v-container>
     </v-form>
 
-    <v-progress-linear height="2" style="margin: 0 0 -2px" :indeterminate="true" v-if="todosLoading"></v-progress-linear>
+    <v-bottom-nav :value="true" :active.sync="category" class="transparent Todos-nav">
+      <v-btn flat value="all">
+        <span>All</span>
+        <v-icon>all_inclusive</v-icon>
+      </v-btn>
+      <v-btn flat value="remaining">
+        <span>Remaining</span>
+        <v-icon>check_box_outline_blank</v-icon>
+      </v-btn>
+      <v-btn flat value="completed">
+        <span>Completed</span>
+        <v-icon>check_box</v-icon>
+      </v-btn>
+    </v-bottom-nav>
 
-    <v-todo :todo="todo" v-for="todo in allTodos" :key="todo.id"></v-todo>
+    <transition name="fade-transition">
+      <v-progress-linear height="2" style="margin: 0 0 -2px" :indeterminate="true" v-if="todosLoading"></v-progress-linear>
+    </transition>
 
-    <!--<v-list subheader>
-      <v-list-tile v-for="todo in allTodos" :key="todo.id">
-        <v-list-tile-avatar>
+    <v-todo :todo="todo" v-for="todo in pageTodos" :key="todo.id"></v-todo>
 
-        </v-list-tile-avatar>
-        <v-list-tile-content>
-          <v-list-tile-title>{{todo.title}}</v-list-tile-title>
-        </v-list-tile-content>
-        <v-list-tile-action>
-          <v-container>
-            <v-layout>
-              <v-flex>
-                <v-btn flat icon @click.prevent="toggleTodo({ todo })">
-                  <v-icon v-if="todo.completed">check_box</v-icon>
-                  <v-icon v-else>check_box_outline_blank</v-icon>
-                </v-btn>
-              </v-flex>
-              <v-flex>
-                <v-btn flat icon @click.prevent="removeTodo({ todo })">
-                  <v-icon>delete</v-icon>
-                </v-btn>
-              </v-flex>
-            </v-layout>
-          </v-container>
-
-        </v-list-tile-action>
-      </v-list-tile>
-    </v-list>-->
+    <div class="text-xs-center mt-3">
+      <v-pagination :length="lastPage" v-model="currentPage" :total-visible="7"></v-pagination>
+    </div>
 
   </div>
 </template>
@@ -70,6 +62,9 @@
     data() {
       return {
         newTodoTitle: '',
+        category: 'all',
+        itemsPerPage: 5,
+        currentPage: 1,
         alert: {
           showed: false,
           message: '',
@@ -81,8 +76,28 @@
     computed: {
       ...mapGetters({
         allTodos: 'allTodos',
+        remainingTodos: 'remainingTodos',
+        completedTodos: 'completedTodos',
         todosLoading: 'todosLoading',
       }),
+      todos() {
+        if (this.category === 'remaining') {
+          return this.remainingTodos;
+        } else if (this.category === 'completed') {
+          return this.completedTodos;
+        }
+        return this.allTodos;
+      },
+      pageTodos() {
+        if (this.currentPage > this.lastPage) {
+          this.currentPage = this.lastPage;
+        }
+        const start = (this.currentPage - 1) * this.itemsPerPage;
+        return this.todos.slice(start, start + this.itemsPerPage);
+      },
+      lastPage() {
+        return Math.ceil(this.todos.length / this.itemsPerPage);
+      },
       newTodoIsValid() {
         return this.newTodoTitle !== '';
       },
@@ -118,3 +133,8 @@
   };
 </script>
 
+<style>
+  .Todos-nav {
+    position: static !important;
+  }
+</style>

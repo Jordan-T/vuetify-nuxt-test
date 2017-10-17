@@ -14,6 +14,8 @@ import {
   VForm,
   VAlert,
   VProgressLinear,
+  VBottomNav,
+  VPagination,
 } from 'vuetify';
 
 Vue.use(Vuetify, {
@@ -31,5 +33,7 @@ Vue.use(Vuetify, {
     VForm,
     VAlert,
     VProgressLinear,
+    VBottomNav,
+    VPagination,
   },
 });
