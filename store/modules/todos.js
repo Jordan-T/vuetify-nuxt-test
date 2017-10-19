@@ -23,7 +23,7 @@ const getters = {
 
 // actions
 const actions = {
-  loadTodos({ commit, state }) {
+  loadTodos({ commit, state, dispatch }) {
     if (getters.todosStatus(state) === 'NO_DATA') {
       commit(types.SET_TODOS_LOADING, { loading: true });
       commit(types.SET_TODOS_STATUS, { status: 'RECEIVING' });
@@ -33,13 +33,21 @@ const actions = {
         commit(types.SET_TODOS, { todos: response.data });
         commit(types.SET_TODOS_STATUS, { status: 'RECEIVED' });
         commit(types.SET_TODOS_LOADING, { loading: false });
+      }).catch(() => {
+        dispatch('addAlert', {
+          alert: {
+            text: 'Error on load todos',
+            color: 'error',
+          },
+        });
+        commit(types.SET_TODOS_LOADING, { loading: false });
       });
     }
     return new Promise((resolve) => {
       resolve(getters.allTodos(state));
     });
   },
-  addTodo({ commit }, { title }) {
+  addTodo({ commit, dispatch }, { title }) {
     const newTodo = {
       title,
       completed: false,
@@ -48,6 +56,14 @@ const actions = {
     commit(types.SET_TODOS_LOADING, { loading: true });
     todosApi.addTodo(newTodo).then((response) => {
       commit(types.ADD_TODO, { todo: response.data });
+      commit(types.SET_TODOS_LOADING, { loading: false });
+    }).catch(() => {
+      dispatch('addAlert', {
+        alert: {
+          text: `Error on add todo "${title}" please try again`,
+          color: 'error',
+        },
+      });
       commit(types.SET_TODOS_LOADING, { loading: false });
     });
   },
